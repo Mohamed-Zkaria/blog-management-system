@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Delete, Get, Param, Patch, Post, Query } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Query } from '@nestjs/common';
 import { CreateBlogsDTO, UpdateBlogsDTO } from './blogs.types';
 import { BlogsService } from './blogs.service';
 
@@ -13,16 +13,12 @@ export class BlogsController {
     }
 
     @Get(":id")
-    async getBlog(@Param("id") id: string) {
-        const numericId = parseInt(id, 10);
-        if (isNaN(numericId)) {
-            throw new BadRequestException('Invalid blog ID');
-        }
-        return await this.blogService.getBlog(numericId)
+    async getBlog(@Param("id", ParseIntPipe) id: number) {
+        return await this.blogService.getBlog(id)
     }
 
     @Patch(":id")
-    async updateBlog(@Param("id") id: string, @Body() newBlog: UpdateBlogsDTO) {
+    async updateBlog(@Param("id", ParseIntPipe) id: string, @Body() newBlog: UpdateBlogsDTO) {
         const numericId = parseInt(id, 10);
         if (isNaN(numericId)) {
             throw new BadRequestException('Invalid blog ID');
@@ -31,7 +27,7 @@ export class BlogsController {
     }
 
     @Delete(":id")
-    async deleteBlog(@Param("id") id: string) {
+    async deleteBlog(@Param("id", ParseIntPipe) id: string) {
         const numericId = parseInt(id, 10);
         if (isNaN(numericId)) {
             throw new BadRequestException('Invalid blog ID');
@@ -40,7 +36,11 @@ export class BlogsController {
     }
 
     @Get("")
-    async listBlogs(@Query("tags") tags: string, @Query("page") page: number, @Query("perPage") perPage: number) {
+    async listBlogs(
+        @Query("tags") tags: string, 
+        @Query("page", ParseIntPipe) page: number, 
+        @Query("perPage", ParseIntPipe) perPage: number
+    ) {
         return await this.blogService.listBlogs({ tags, page, perPage });
     }
 }
