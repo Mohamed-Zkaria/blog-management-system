@@ -23,8 +23,6 @@ export class BlogsController {
         return await this.blogService.createBlog(createblogDto)
     }
     
-    @UseGuards(RolesGuard)
-    @Roles(Role.Admin)
     @ApiResponse({ status: HttpStatus.OK, description: 'The record has been retrived successfully' })
     @Get(":id")
     async getBlog(@Param("id", ParseIntPipe) id: number) {
@@ -54,8 +52,6 @@ export class BlogsController {
         return await this.blogService.deleteBlog(numericId);
     }
 
-    @UseGuards(RolesGuard)
-    @Roles(Role.Admin)
     @Get("")
     async listBlogs(
         @Query("tags") tags: string,
