@@ -28,7 +28,7 @@ export class UserService {
         } catch (err) {
             if (err.code == 23505) {
                 this.logger.error(err.message, err.stack);
-                throw new HttpException('Username already exists', HttpStatus.CONFLICT);
+                throw new HttpException('Email already exists', HttpStatus.CONFLICT);
             }
             this.logger.error(err.message, err.stack);
             throw new InternalServerErrorException(
