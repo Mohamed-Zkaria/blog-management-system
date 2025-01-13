@@ -2,24 +2,32 @@ import { BadRequestException, Body, Controller, Delete, Get, Param, ParseIntPipe
 import { CreateBlogsDTO, UpdateBlogsDTO } from './blogs.types';
 import { BlogsService } from './blogs.service';
 import { AuthGuard } from 'src/auth/auth.gaurd';
+import { Role } from 'src/roles/role.enum';
+import { Roles } from 'src/roles/roles.decorator';
+import { RolesGuard } from 'src/roles/roles.gaurd';
 
 @Controller('blogs')
+@UseGuards(AuthGuard)
 export class BlogsController {
 
     constructor(private readonly blogService: BlogsService) { }
-    @UseGuards(AuthGuard)
+    
+    @UseGuards(RolesGuard)
+    @Roles(Role.Admin, Role.Editor)
     @Post("")
     async createBlog(@Body() createblogDto: CreateBlogsDTO) {
         return await this.blogService.createBlog(createblogDto)
     }
-
-    @UseGuards(AuthGuard)
+    
+    @UseGuards(RolesGuard)
+    @Roles(Role.Admin)
     @Get(":id")
     async getBlog(@Param("id", ParseIntPipe) id: number) {
         return await this.blogService.getBlog(id)
     }
-
-    @UseGuards(AuthGuard)
+    
+    @UseGuards(RolesGuard)
+    @Roles(Role.Admin, Role.Editor)
     @Patch(":id")
     async updateBlog(@Param("id", ParseIntPipe) id: string, @Body() newBlog: UpdateBlogsDTO) {
         const numericId = parseInt(id, 10);
@@ -28,8 +36,9 @@ export class BlogsController {
         }
         return await this.blogService.updateBlog(numericId, newBlog);
     }
-
-    @UseGuards(AuthGuard)
+    
+    @UseGuards(RolesGuard)
+    @Roles(Role.Admin)
     @Delete(":id")
     async deleteBlog(@Param("id", ParseIntPipe) id: string) {
         const numericId = parseInt(id, 10);
@@ -38,8 +47,9 @@ export class BlogsController {
         }
         return await this.blogService.deleteBlog(numericId);
     }
-
-    @UseGuards(AuthGuard)
+    
+    @UseGuards(RolesGuard)
+    @Roles(Role.Admin)
     @Get("")
     async listBlogs(
         @Query("tags") tags: string, 
