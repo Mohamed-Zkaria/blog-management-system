@@ -12,7 +12,11 @@ git clone
 cd blog-management-system
 npm install 
 npm run build 
-npm run start:prod.
+npm run start:prod
+```
+or start with docker
+```
+docker compose up 
 ```
 
 
